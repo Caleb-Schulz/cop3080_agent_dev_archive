@@ -1,3 +1,4 @@
+# uv add langchain-core langchain-google-vertexai google-genai python-dotenv 
 from langchain_core.callbacks.base import BaseCallbackHandler
 from typing import Any, Dict, List 
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -43,7 +44,7 @@ class DemoCallbackHandler(BaseCallbackHandler):
 if __name__ == "__main__":
     
     # Create LLM with custom callback
-    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", 
+    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", 
                                  callbacks=[DemoCallbackHandler()])
 
     # Run a simple query
