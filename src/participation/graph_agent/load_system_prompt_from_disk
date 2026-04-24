@@ -1,0 +1,30 @@
+def load_system_prompt(path: str = "prompts/yenbase_advisor.md") -> str:
+    """Read the advisor's system prompt from a markdown file so that
+    business owners can edit loan rates and tone without a code change."""
+    prompt_path = Path(path)
+    if not prompt_path.exists():
+        raise FileNotFoundError(
+            f"System prompt not found at {prompt_path.resolve()}. "
+            "Create prompts/yenbase_advisor.md (see README)."
+        )
+    return prompt_path.read_text(encoding="utf-8")
+
+###############################################################
+class StateMachine:
+    def __init__(self, memory, thread_id: str | None = None):
+        # Task 2 — accept a thread_id or generate a unique one per session
+        self.thread_id = thread_id or str(uuid.uuid4())
+        self.thread = {"configurable": {"thread_id": self.thread_id}}
+
+        model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
+
+        # Task 5 — prompt text comes from the filesystem, not a Python string
+        system_text = load_system_prompt()
+        system_prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_text),
+                ("placeholder", "{messages}"),
+                ("human", "{input}"),
+            ]
+        )
+        sp_function = system_prompt | model
