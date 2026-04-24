@@ -1,0 +1,32 @@
+EXIT_WORDS = {"STOP", "QUIT", "EXIT"}
+
+
+def run_chat(agent: StateMachine) -> None:
+    print(f"Agent ready (thread_id={agent.thread_id}).")
+    print("Type STOP, QUIT, or EXIT to end.\n")
+    while True:
+        try:
+            user_question = input("User: ")
+        except (KeyboardInterrupt, EOFError):
+            # Ctrl+C or Ctrl+D — exit cleanly instead of showing a traceback
+            print("\nSession ended.")
+            return
+
+        cleaned = user_question.strip()
+        if not cleaned:
+            # Empty Enter — skip the API call (saves tokens / money)
+            continue
+        if cleaned.upper() in EXIT_WORDS:
+            print("Session ended.")
+            return
+
+        answer = agent.respond(cleaned)
+        print("Agent: " + answer + "\n")
+
+##############################
+if __name__ == "__main__":
+# Task 1 — persistent SQLite file on disk. Survives process restarts.
+  with SqliteSaver.from_conn_string("yenbase.db") as memory:
+      agent = StateMachine(memory)
+      agent.chain.get_graph().print_ascii()
+      run_chat(agent)
