@@ -1,0 +1,6 @@
+if __name__ == "__main__":
+    # Task 1 — persistent SQLite file on disk. Survives process restarts.
+    with SqliteSaver.from_conn_string("yenbase.db") as memory:
+        agent = StateMachine(memory)
+        agent.chain.get_graph().print_ascii()
+        run_chat(agent)
